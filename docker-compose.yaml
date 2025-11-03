@@ -1,10 +1,54 @@
+# services:
+#   backend:
+#     container_name: backend
+#     build:
+#       context: ./backend
+#       dockerfile: Dockerfile
+#     # restart: always
+#     ports:
+#       - 4000:4000
+#       - 5555:5555
+#     depends_on:
+#       - db
+#     environment:
+#       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres?schema=public
+#   db:
+#     container_name: db
+#     image: postgres:12
+#     restart: always
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#       POSTGRES_DB: postgres
+#     ports:
+#       - 5432:5432
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+
+#   frontend:
+#     container_name: frontend
+#     build:
+#       context: ./frontend
+#       dockerfile: Dockerfile
+#     ports:
+#       - 3000:3000
+#     depends_on:
+#       - backend
+#     environment:
+#       - NEXT_PUBLIC_API_URL=http://localhost:4000
+#     volumes:
+#       - ./frontend:/app
+#       - /app/node_modules
+
+# volumes:
+#   pgdata:
+
 services:
   backend:
     container_name: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # restart: always
     ports:
       - 4000:4000
       - 5555:5555
@@ -12,6 +56,14 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres?schema=public
+      - NODE_ENV=development   
+      - CHOKIDAR_USEPOLLING=true         # 👈 force hot reload on Windows
+      - WATCHPACK_POLLING=true         # 👈 ensure dev mode
+    volumes:
+      - ./backend:/app                # 👈 live sync backend files
+      - /app/node_modules             # 👈 prevent overwrite of container deps
+      - ./backend/prisma:/app/prisma  # 👈 keep Prisma updates synced
+
   db:
     container_name: db
     image: postgres:12
@@ -24,6 +76,25 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
+      - NODE_ENV=development           # 👈 ensure Next.js runs in dev mode
+      - CHOKIDAR_USEPOLLING=true         # 👈 force hot reload on Windows
+      - WATCHPACK_POLLING=true 
+    
+    volumes:
+      - ./frontend:/app                # 👈 live sync frontend code
+      - /app/node_modules              # 👈 protect container deps
 
 volumes:
   pgdata:
