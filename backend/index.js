@@ -57,8 +57,8 @@ app.post("/users", async(req, res) => {
     try {
         const newuser = await prisma.user.create({
             data: {
-                name: String(req.params.name),
-                email: String(req.params.email)
+                name: req.params.name,
+                email: req.params.email
             },
         });
         res.status(201).json("user added succefully ", newuser)
