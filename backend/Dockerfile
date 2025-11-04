@@ -7,16 +7,15 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
-RUN npm install -g nodemon 
 # Copy prisma folder and source code
 COPY prisma ./prisma/
 COPY . .
 
 # Generate Prisma client inside the container
-RUN npx prisma generate
-
-# Expose port
 EXPOSE 4000
 
+
+# Expose port
+
 # Start app
-CMD ["node", "nodemon", "index.js"]
+ENTRYPOINT ["./entrypoint.sh"]
