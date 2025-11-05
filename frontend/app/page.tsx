@@ -1,25 +1,15 @@
-"use client"; // 👈 this tells Next.js this is a client component
+"use client";
 
-import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button"; // path from shadcn UI setup
 
 export default function Home() {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_API_URL + "/users")
-      .then((res) => res.json())
-      .then((data) => setUsers(data))
-      .catch((err) => console.error(err));
-  }, []);
-
   return (
-    <main style={{ padding: "2rem" }}>
-      <h1>Users from Backend:</h1>
-      <ul>
-        {users.map((u) => (
-          <li key={u.id}>{u.name} ({u.email})</li>
-        ))}
-      </ul>
+    <main className="flex flex-col items-center justify-center min-h-screen gap-4 bg-base-100">
+      {/* DaisyUI button */}
+      <button className="btn btn-primary">Click me</button>
+
+      {/* shadcn UI button */}
+      <Button variant="default">Shadcn Button</Button>
     </main>
   );
 }
