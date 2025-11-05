@@ -18,6 +18,7 @@ model User {
   createdAt DateTime @default(now())
   accounts Account[]
   refreshTokens RefreshToken[]
+  role String @default("user")
 }
 
 model Account {
@@ -26,7 +27,7 @@ model Account {
   providerId String
   accessToken String?
   refreshToken String?
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   @@unique([provider, providerId])
 }
@@ -34,7 +35,7 @@ model Account {
 model RefreshToken {
   id Int @id @default(autoincrement())
   token String @unique
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   createdAt DateTime @default(now())
   revoked Boolean @default(false)

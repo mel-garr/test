@@ -104,6 +104,13 @@
 
 require('dotenv').config();
 const app = require('./src/app');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const PORT = 4000
 app.listen(PORT, () => console.log(`SERVER RUNNING ON PORT ${PORT}`));
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  console.log('Prisma disconnected. Server shutting down.');
+  process.exit(0);
+});
